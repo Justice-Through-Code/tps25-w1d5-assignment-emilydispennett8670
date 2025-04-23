@@ -57,7 +57,7 @@ def get_all_breeds():
         return response.json()["message"]
     except requests.exceptions.RequestException:
         print("Error: Could not fetch breed list from API")
-        return {}
+        return None
 
 def get_random_image(breed):
     # 2. Get a random image from a breed
@@ -82,10 +82,11 @@ def get_random_sub_breed_image(breed, sub_breed):
     try:
         response = requests.get("https://dog.ceo/api/breed/{breed}/{sub_breed}/images/random")
         response.raise_for_status()
+        data = response.json()
         if data["status"] == "success":
             return data["message"]
         else:
-            print(f"API error: {data}")
+            print(f"API error: {response}")
             return None
     except requests.exceptions.RequestException as e:
         print("could not fetch images for that sub-breed: {e}")
@@ -120,7 +121,7 @@ def main():
             show_breeds(breeds)
 
         elif choice == "2":    
-            breeds = get_all_breeds()
+            breeds = get_random_sub_breed_image()
             breed = input("Enter breed name: ").strip().lower()
             if breed in breeds:
                 image_url = get_random_sub_breed_image(breed)
